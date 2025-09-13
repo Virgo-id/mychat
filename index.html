@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Grup Chat</title>
+  <meta name="theme-color" content="#075E54" />
+  <style>
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+      font-family: "Segoe UI", sans-serif;
+      background: #ece5dd;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* HEADER */
+    header {
+      background: #075E54;
+      color: white;
+      padding: 0.8rem 1rem;
+      font-weight: bold;
+      font-size: 1.1rem;
+    }
+
+    /* CHAT AREA */
+    #chat-box {
+      flex: 1;
+      padding: 1rem;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      scroll-behavior: smooth;
+      background: url("https://i.ibb.co/4YZRcdt/wa-bg.png") repeat;
+      background-size: 300px;
+    }
+    #chat-box::-webkit-scrollbar { display: none; }
+
+    .pesan-ku, .pesan-lawan {
+      max-width: 70%;
+      padding: 0.6rem 0.9rem;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      line-height: 1.3;
+      position: relative;
+      transition: transform 0.2s ease;
+      white-space: pre-wrap; /* multiline */
+      word-wrap: break-word;
+    }
+    .pesan-ku {
+      align-self: flex-end;
+      background: #dcf8c6;
+      color: #111;
+      border-top-right-radius: 0;
+    }
+    .pesan-lawan {
+      align-self: flex-start;
+      background: #ffffff;
+      color: #111;
+      border-top-left-radius: 0;
+    }
+
+    /* Nama pengirim */
+    .nama-pengirim {
+      font-weight: bold;
+      font-size: 0.8rem;
+      margin-bottom: 3px;
+      color: #075E54;
+    }
+
+    /* ICON BUTTONS */
+    .hapus-btn, .reply-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      border: none;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      font-size: 14px;
+      display: none;
+      cursor: pointer;
+      background: #075E54;
+      color: white;
+    }
+    .hapus-btn { right: -30px; }
+    .reply-btn { left: -30px; }
+
+    .pesan-ku.pesan-show-tools { transform: translateX(-65px); }
+    .pesan-lawan.pesan-show-tools { transform: translateX(45px); }
+
+    .pesan-ku.pesan-show-tools .hapus-btn,
+    .pesan-ku.pesan-show-tools .reply-btn,
+    .pesan-lawan.pesan-show-tools .reply-btn {
+      display: block;
+    }
+
+    /* REPLY PREVIEW */
+    #reply-preview {
+      display: none;
+      background: #f0f0f0;
+      border-left: 4px solid #34b7f1;
+      padding: 0.5rem;
+      font-size: 0.9rem;
+      color: #333;
+      margin: 0 0.5rem;
+      border-radius: 4px;
+    }
+    #reply-preview span {
+      font-weight: bold;
+      color: #075E54;
+    }
+    #reply-preview button {
+      float: right;
+      background: none;
+      border: none;
+      font-size: 16px;
+      cursor: pointer;
+      color: #888;
+    }
+
+    /* INPUT AREA */
+    form {
+      display: flex;
+      align-items: flex-end;
+      padding: 0.5rem;
+      background: #f0f0f0;
+      border-top: 1px solid #ddd;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+    .input-row {
+      display: flex;
+      align-items: center;
+      width: 100%;
+    }
+    textarea {
+      flex: 1;
+      padding: 0.6rem 1rem;
+      border: none;
+      border-radius: 25px;
+      background: #fff;
+      color: #111;
+      font-size: 1rem;
+      outline: none;
+      resize: none;
+      max-height: 120px;
+      line-height: 1.4;
+      box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+    }
+    button[type="submit"] {
+      margin-left: 0.5rem;
+      background: #25d366;
+      color: white;
+      border: none;
+      padding: 0.6rem 0.9rem;
+      border-radius: 50%;
+      font-size: 1.2rem;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      transition: background 0.2s;
+    }
+    button[type="submit"]:hover {
+      background: #20b954;
+    }
+
+    /* LOGIN CARD */
+    #login-card {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: #ece5dd;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+    #login-card .card {
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      text-align: center;
+    }
+    #login-card input {
+      padding: 0.6rem;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      width: 100%;
+      margin-top: 1rem;
+      font-size: 1rem;
+    }
+    #login-card button {
+      margin-top: 1rem;
+      padding: 0.6rem 1.2rem;
+      background: #075E54;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- LOGIN CARD -->
+  <div id="login-card">
+    <div class="card">
+      <h2>Masukkan Nama</h2>
+      <input type="text" id="username-input" placeholder="Nama kamu..." />
+      <button id="start-btn">Mulai Chat</button>
+    </div>
+  </div>
+
+  <!-- HEADER -->
+  <header>Grup Chat</header>
+
+  <!-- CHAT BOX -->
+  <main id="chat-box"></main>
+
+  <!-- INPUT -->
+  <form id="chat-form" autocomplete="off">
+    <div id="reply-preview"></div>
+    <div class="input-row">
+      <textarea id="message-input" placeholder="Ketik pesan..." rows="1" required></textarea>
+      <button type="submit">➤</button>
+    </div>
+  </form>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDus8i7JhDWZrT-bY2fwmOP_rD3zr5E9E0",
+      authDomain: "chat-70140.firebaseapp.com",
+      projectId: "chat-70140",
+      storageBucket: "chat-70140.firebasestorage.app",
+      messagingSenderId: "796820008461",
+      appId: "1:796820008461:web:96476a1d574ddf11c96f44",
+      measurementId: "G-X202Y1LGBX"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    const chatBox = document.getElementById("chat-box");
+    const form = document.getElementById("chat-form");
+    const input = document.getElementById("message-input");
+    const replyPreview = document.getElementById("reply-preview");
+
+    const loginCard = document.getElementById("login-card");
+    const usernameInput = document.getElementById("username-input");
+    const startBtn = document.getElementById("start-btn");
+
+    let myUserId = localStorage.getItem("userId");
+    if (!myUserId) {
+      myUserId = "u" + Math.random().toString(36).substr(2, 9);
+      localStorage.setItem("userId", myUserId);
+    }
+    let username = localStorage.getItem("username");
+
+    if (username) loginCard.style.display = "none";
+
+    startBtn.addEventListener("click", () => {
+      const nama = usernameInput.value.trim();
+      if (nama) {
+        username = nama;
+        localStorage.setItem("username", nama);
+        loginCard.style.display = "none";
+      }
+    });
+
+    let replyTo = null;
+
+    // auto-resize textarea
+    input.addEventListener("input", () => {
+      input.style.height = "auto";
+      input.style.height = (input.scrollHeight) + "px";
+    });
+
+    // enter = kirim, shift+enter = baris baru
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        form.requestSubmit();
+      }
+    });
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const message = input.value.trim();
+      if (message && username) {
+        db.ref("pesan").push({
+          userId: myUserId,
+          nama: username,
+          teks: message,
+          replyTo: replyTo,
+          waktu: Date.now()
+        });
+        input.value = "";
+        input.style.height = "auto";
+        replyTo = null;
+        replyPreview.style.display = "none";
+      }
+    });
+
+    function createMessageElement(data, key) {
+      const el = document.createElement("div");
+      el.className = data.userId === myUserId ? "pesan-ku" : "pesan-lawan";
+      el.dataset.key = key;
+
+      // nama pengirim
+      const namaEl = document.createElement("div");
+      namaEl.className = "nama-pengirim";
+      namaEl.textContent = data.nama;
+      el.appendChild(namaEl);
+
+      // reply
+      if (data.replyTo) {
+        const replyEl = document.createElement("div");
+        replyEl.style.fontSize = "0.8rem";
+        replyEl.style.color = "#555";
+        replyEl.style.borderLeft = "3px solid #34b7f1";
+        replyEl.style.paddingLeft = "4px";
+        replyEl.style.marginBottom = "4px";
+        replyEl.textContent = data.replyTo.teks;
+        el.appendChild(replyEl);
+      }
+
+      // teks
+      const teksEl = document.createElement("div");
+      teksEl.textContent = data.teks;
+      el.appendChild(teksEl);
+
+      // tombol kita
+      if (data.userId === myUserId) {
+        const delBtn = document.createElement("button");
+        delBtn.textContent = "✖";
+        delBtn.className = "hapus-btn";
+        delBtn.addEventListener("click", () => {
+          db.ref("pesan").child(key).remove();
+        });
+        el.appendChild(delBtn);
+
+        const replyBtn = document.createElement("button");
+        replyBtn.textContent = "↩";
+        replyBtn.className = "reply-btn";
+        replyBtn.addEventListener("click", () => {
+          replyTo = { nama: data.nama, teks: data.teks };
+          replyPreview.innerHTML = `<span>${data.nama}</span>: ${data.teks} <button onclick="cancelReply()">✖</button>`;
+          replyPreview.style.display = "block";
+        });
+        el.appendChild(replyBtn);
+
+        el.addEventListener("click", () => {
+          el.classList.toggle("pesan-show-tools");
+        });
+      } else {
+        const replyBtn = document.createElement("button");
+        replyBtn.textContent = "↩";
+        replyBtn.className = "reply-btn";
+        replyBtn.addEventListener("click", () => {
+          replyTo = { nama: data.nama, teks: data.teks };
+          replyPreview.innerHTML = `<span>${data.nama}</span>: ${data.teks} <button onclick="cancelReply()">✖</button>`;
+          replyPreview.style.display = "block";
+        });
+        el.appendChild(replyBtn);
+
+        el.addEventListener("click", () => {
+          el.classList.toggle("pesan-show-tools");
+        });
+      }
+
+      return el;
+    }
+
+    function cancelReply() {
+      replyTo = null;
+      replyPreview.style.display = "none";
+    }
+
+    db.ref("pesan").limitToLast(200).on("child_added", (snapshot) => {
+      const data = snapshot.val();
+      const key = snapshot.key;
+      const el = createMessageElement(data, key);
+      chatBox.appendChild(el);
+      chatBox.scrollTop = chatBox.scrollHeight;
+
+      if (chatBox.children.length > 200) {
+        const first = chatBox.firstChild;
+        if (first && first.dataset.key) {
+          db.ref("pesan").child(first.dataset.key).remove();
+        }
+      }
+    });
+
+    db.ref("pesan").on("child_removed", (snapshot) => {
+      const key = snapshot.key;
+      const el = chatBox.querySelector(`[data-key="${key}"]`);
+      if (el) el.remove();
+    });
+  </script>
+</body>
+</html>
