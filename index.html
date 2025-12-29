@@ -1,409 +1,178 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Grup Chat</title>
-  <meta name="theme-color" content="#075E54" />
-  <style>
-    * { box-sizing: border-box; }
-    html, body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      width: 100%;
-      font-family: "Segoe UI", sans-serif;
-      background: #ece5dd;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
-
-    /* HEADER */
-    header {
-      background: #075E54;
-      color: white;
-      padding: 0.8rem 1rem;
-      font-weight: bold;
-      font-size: 1.1rem;
-    }
-
-    /* CHAT AREA */
-    #chat-box {
-      flex: 1;
-      padding: 1rem;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-      scroll-behavior: smooth;
-      background: url("https://i.ibb.co/4YZRcdt/wa-bg.png") repeat;
-      background-size: 300px;
-    }
-    #chat-box::-webkit-scrollbar { display: none; }
-
-    .pesan-ku, .pesan-lawan {
-      max-width: 70%;
-      padding: 0.6rem 0.9rem;
-      border-radius: 8px;
-      font-size: 0.95rem;
-      line-height: 1.3;
-      position: relative;
-      transition: transform 0.2s ease;
-      white-space: pre-wrap; /* multiline */
-      word-wrap: break-word;
-    }
-    .pesan-ku {
-      align-self: flex-end;
-      background: #dcf8c6;
-      color: #111;
-      border-top-right-radius: 0;
-    }
-    .pesan-lawan {
-      align-self: flex-start;
-      background: #ffffff;
-      color: #111;
-      border-top-left-radius: 0;
-    }
-
-    /* Nama pengirim */
-    .nama-pengirim {
-      font-weight: bold;
-      font-size: 0.8rem;
-      margin-bottom: 3px;
-      color: #075E54;
-    }
-
-    /* ICON BUTTONS */
-    .hapus-btn, .reply-btn {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      border: none;
-      border-radius: 50%;
-      width: 24px;
-      height: 24px;
-      font-size: 14px;
-      display: none;
-      cursor: pointer;
-      background: #075E54;
-      color: white;
-    }
-    .hapus-btn { right: -30px; }
-    .reply-btn { left: -30px; }
-
-    .pesan-ku.pesan-show-tools { transform: translateX(-65px); }
-    .pesan-lawan.pesan-show-tools { transform: translateX(45px); }
-
-    .pesan-ku.pesan-show-tools .hapus-btn,
-    .pesan-ku.pesan-show-tools .reply-btn,
-    .pesan-lawan.pesan-show-tools .reply-btn {
-      display: block;
-    }
-
-    /* REPLY PREVIEW */
-    #reply-preview {
-      display: none;
-      background: #f0f0f0;
-      border-left: 4px solid #34b7f1;
-      padding: 0.5rem;
-      font-size: 0.9rem;
-      color: #333;
-      margin: 0 0.5rem;
-      border-radius: 4px;
-    }
-    #reply-preview span {
-      font-weight: bold;
-      color: #075E54;
-    }
-    #reply-preview button {
-      float: right;
-      background: none;
-      border: none;
-      font-size: 16px;
-      cursor: pointer;
-      color: #888;
-    }
-
-    /* INPUT AREA */
-    form {
-      display: flex;
-      align-items: flex-end;
-      padding: 0.5rem;
-      background: #f0f0f0;
-      border-top: 1px solid #ddd;
-      flex-direction: column;
-      gap: 0.3rem;
-    }
-    .input-row {
-      display: flex;
-      align-items: center;
-      width: 100%;
-    }
-    textarea {
-      flex: 1;
-      padding: 0.6rem 1rem;
-      border: none;
-      border-radius: 25px;
-      background: #fff;
-      color: #111;
-      font-size: 1rem;
-      outline: none;
-      resize: none;
-      max-height: 120px;
-      line-height: 1.4;
-      box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
-    }
-    button[type="submit"] {
-      margin-left: 0.5rem;
-      background: #25d366;
-      color: white;
-      border: none;
-      padding: 0.6rem 0.9rem;
-      border-radius: 50%;
-      font-size: 1.2rem;
-      cursor: pointer;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-      transition: background 0.2s;
-    }
-    button[type="submit"]:hover {
-      background: #20b954;
-    }
-
-    /* LOGIN CARD */
-    #login-card {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: #ece5dd;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 999;
-    }
-    #login-card .card {
-      background: white;
-      padding: 2rem;
-      border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-      text-align: center;
-    }
-    #login-card input {
-      padding: 0.6rem;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      width: 100%;
-      margin-top: 1rem;
-      font-size: 1rem;
-    }
-    #login-card button {
-      margin-top: 1rem;
-      padding: 0.6rem 1.2rem;
-      background: #075E54;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Keluarga Realtime</title>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+    <style>
+        body { font-family: sans-serif; margin: 0; display: flex; height: 100vh; background: #e5ddd5; }
+        #login-screen { margin: auto; text-align: center; background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        #chat-app { display: none; width: 100%; }
+        #sidebar { width: 30%; background: #fff; border-right: 1px solid #ddd; display: flex; flex-direction: column; }
+        #chat-window { width: 70%; display: flex; flex-direction: column; }
+        #messages { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; }
+        .msg { margin-bottom: 10px; padding: 10px; border-radius: 8px; max-width: 70%; }
+        .msg.me { align-self: flex-end; background: #dcf8c6; }
+        .msg.them { align-self: flex-start; background: #fff; }
+        #input-area { padding: 10px; background: #f0f0f0; display: flex; }
+        input { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 5px; }
+        button { padding: 10px; cursor: pointer; border: none; background: #075e54; color: white; border-radius: 5px; margin-left: 5px; }
+        .contact-item { padding: 15px; border-bottom: 1px solid #eee; cursor: pointer; }
+        .contact-item:hover { background: #f9f9f9; }
+        .status-bar { padding: 10px; font-size: 12px; background: #eee; border-bottom: 1px solid #ddd; display: flex; justify-content: space-between; }
+    </style>
 </head>
 <body>
-
-  <!-- LOGIN CARD -->
-  <div id="login-card">
-    <div class="card">
-      <h2>Masukkan Nama</h2>
-      <input type="text" id="username-input" placeholder="Nama kamu..." />
-      <button id="start-btn">Mulai Chat</button>
+<div id="login-screen">
+    <h2>Chat Keluarga</h2>
+    <button onclick="login()" style="background: #4285f4; font-size: 16px;">Login dengan Google</button>
+</div>
+<div id="chat-app">
+    <div id="sidebar">
+        <div class="status-bar">
+            <span id="user-name">Memuat...</span>
+            <button onclick="logout()" style="background: #cc0000; padding: 3px 8px;">Keluar</button>
+        </div>
+        <div style="padding: 10px;">
+            <button onclick="subscribeNotif()" id="notif-btn" style="width: 100%; background: #075e54;">🔔 Aktifkan Notifikasi</button>
+            <hr>
+            <input type="text" id="new-contact-email" placeholder="Email keluarga...">
+            <button onclick="tambahKontak()" style="width: 100%; margin: 5px 0;">Tambah Kontak</button>
+        </div>
+        <div id="contact-list"></div>
     </div>
-  </div>
-
-  <!-- HEADER -->
-  <header>Grup Chat</header>
-
-  <!-- CHAT BOX -->
-  <main id="chat-box"></main>
-
-  <!-- INPUT -->
-  <form id="chat-form" autocomplete="off">
-    <div id="reply-preview"></div>
-    <div class="input-row">
-      <textarea id="message-input" placeholder="Ketik pesan..." rows="1" required></textarea>
-      <button type="submit">➤</button>
+    <div id="chat-window">
+        <div id="messages">Pilih kontak untuk mulai chat</div>
+        <div id="input-area" style="display: none;">
+            <input type="text" id="msg-input" placeholder="Ketik pesan...">
+            <button onclick="kirimPesan()">Kirim</button>
+        </div>
     </div>
-  </form>
-
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
-  <script>
+</div>
+<script>
     const firebaseConfig = {
-      apiKey: "AIzaSyDus8i7JhDWZrT-bY2fwmOP_rD3zr5E9E0",
-      authDomain: "chat-70140.firebaseapp.com",
-      projectId: "chat-70140",
-      storageBucket: "chat-70140.firebasestorage.app",
-      messagingSenderId: "796820008461",
-      appId: "1:796820008461:web:96476a1d574ddf11c96f44",
-      measurementId: "G-X202Y1LGBX"
+        apiKey: "AIzaSyDPRX2nyEeLJsmXgwahVoo48tH4qNgR-QA",
+        authDomain: "chat-ef550.firebaseapp.com",
+        databaseURL: "https://chat-ef550-default-rtdb.firebaseio.com",
+        projectId: "chat-ef550",
+        storageBucket: "chat-ef550.firebasestorage.app",
+        messagingSenderId: "126809001422",
+        appId: "1:126809001422:web:73c0acc196642f1adf6f9f"
     };
     firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
     const db = firebase.database();
-
-    const chatBox = document.getElementById("chat-box");
-    const form = document.getElementById("chat-form");
-    const input = document.getElementById("message-input");
-    const replyPreview = document.getElementById("reply-preview");
-
-    const loginCard = document.getElementById("login-card");
-    const usernameInput = document.getElementById("username-input");
-    const startBtn = document.getElementById("start-btn");
-
-    let myUserId = localStorage.getItem("userId");
-    if (!myUserId) {
-      myUserId = "u" + Math.random().toString(36).substr(2, 9);
-      localStorage.setItem("userId", myUserId);
+    let currentUser = null;
+    let activeChatUser = null;
+    window.OneSignalDeferred = window.OneSignalDeferred || [];
+    OneSignalDeferred.push(async function(OneSignal) {
+        await OneSignal.init({
+            appId: "80fae3f0-8acb-402c-b426-74cdc90d39ff",
+        });
+    });
+    function login() {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        auth.signInWithPopup(provider);
     }
-    let username = localStorage.getItem("username");
-
-    if (username) loginCard.style.display = "none";
-
-    startBtn.addEventListener("click", () => {
-      const nama = usernameInput.value.trim();
-      if (nama) {
-        username = nama;
-        localStorage.setItem("username", nama);
-        loginCard.style.display = "none";
-      }
-    });
-
-    let replyTo = null;
-
-    // auto-resize textarea
-    input.addEventListener("input", () => {
-      input.style.height = "auto";
-      input.style.height = (input.scrollHeight) + "px";
-    });
-
-    // enter = kirim, shift+enter = baris baru
-    input.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" && !e.shiftKey) {
-        e.preventDefault();
-        form.requestSubmit();
-      }
-    });
-
-    form.addEventListener("submit", (e) => {
-      e.preventDefault();
-      const message = input.value.trim();
-      if (message && username) {
-        db.ref("pesan").push({
-          userId: myUserId,
-          nama: username,
-          teks: message,
-          replyTo: replyTo,
-          waktu: Date.now()
-        });
-        input.value = "";
-        input.style.height = "auto";
-        replyTo = null;
-        replyPreview.style.display = "none";
-      }
-    });
-
-    function createMessageElement(data, key) {
-      const el = document.createElement("div");
-      el.className = data.userId === myUserId ? "pesan-ku" : "pesan-lawan";
-      el.dataset.key = key;
-
-      // nama pengirim
-      const namaEl = document.createElement("div");
-      namaEl.className = "nama-pengirim";
-      namaEl.textContent = data.nama;
-      el.appendChild(namaEl);
-
-      // reply
-      if (data.replyTo) {
-        const replyEl = document.createElement("div");
-        replyEl.style.fontSize = "0.8rem";
-        replyEl.style.color = "#555";
-        replyEl.style.borderLeft = "3px solid #34b7f1";
-        replyEl.style.paddingLeft = "4px";
-        replyEl.style.marginBottom = "4px";
-        replyEl.textContent = data.replyTo.teks;
-        el.appendChild(replyEl);
-      }
-
-      // teks
-      const teksEl = document.createElement("div");
-      teksEl.textContent = data.teks;
-      el.appendChild(teksEl);
-
-      // tombol kita
-      if (data.userId === myUserId) {
-        const delBtn = document.createElement("button");
-        delBtn.textContent = "✖";
-        delBtn.className = "hapus-btn";
-        delBtn.addEventListener("click", () => {
-          db.ref("pesan").child(key).remove();
-        });
-        el.appendChild(delBtn);
-
-        const replyBtn = document.createElement("button");
-        replyBtn.textContent = "↩";
-        replyBtn.className = "reply-btn";
-        replyBtn.addEventListener("click", () => {
-          replyTo = { nama: data.nama, teks: data.teks };
-          replyPreview.innerHTML = `<span>${data.nama}</span>: ${data.teks} <button onclick="cancelReply()">✖</button>`;
-          replyPreview.style.display = "block";
-        });
-        el.appendChild(replyBtn);
-
-        el.addEventListener("click", () => {
-          el.classList.toggle("pesan-show-tools");
-        });
-      } else {
-        const replyBtn = document.createElement("button");
-        replyBtn.textContent = "↩";
-        replyBtn.className = "reply-btn";
-        replyBtn.addEventListener("click", () => {
-          replyTo = { nama: data.nama, teks: data.teks };
-          replyPreview.innerHTML = `<span>${data.nama}</span>: ${data.teks} <button onclick="cancelReply()">✖</button>`;
-          replyPreview.style.display = "block";
-        });
-        el.appendChild(replyBtn);
-
-        el.addEventListener("click", () => {
-          el.classList.toggle("pesan-show-tools");
-        });
-      }
-
-      return el;
+    function logout() {
+        auth.signOut().then(() => location.reload());
     }
-
-    function cancelReply() {
-      replyTo = null;
-      replyPreview.style.display = "none";
+    function subscribeNotif() {
+        OneSignalDeferred.push(function(OneSignal) {
+            OneSignal.Slidedown.promptPush();
+        });
     }
-
-    db.ref("pesan").limitToLast(200).on("child_added", (snapshot) => {
-      const data = snapshot.val();
-      const key = snapshot.key;
-      const el = createMessageElement(data, key);
-      chatBox.appendChild(el);
-      chatBox.scrollTop = chatBox.scrollHeight;
-
-      if (chatBox.children.length > 200) {
-        const first = chatBox.firstChild;
-        if (first && first.dataset.key) {
-          db.ref("pesan").child(first.dataset.key).remove();
+    auth.onAuthStateChanged(user => {
+        if (user) {
+            currentUser = user;
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('chat-app').style.display = 'flex';
+            document.getElementById('user-name').innerText = user.displayName;
+            OneSignalDeferred.push(function(OneSignal) {
+                OneSignal.login(user.uid);
+            });
+            db.ref('users/' + user.uid).update({
+                name: user.displayName,
+                email: user.email,
+                photo: user.photoURL
+            });
+            muatKontak();
         }
-      }
     });
-
-    db.ref("pesan").on("child_removed", (snapshot) => {
-      const key = snapshot.key;
-      const el = chatBox.querySelector(`[data-key="${key}"]`);
-      if (el) el.remove();
-    });
-  </script>
+    function tambahKontak() {
+        const email = document.getElementById('new-contact-email').value;
+        db.ref('users').orderByChild('email').equalTo(email).once('value', snapshot => {
+            if (snapshot.exists()) {
+                const targetUid = Object.keys(snapshot.val())[0];
+                db.ref(`users/${currentUser.uid}/contacts/${targetUid}`).set(true);
+                alert("Kontak ditambahkan!");
+            } else {
+                alert("User tidak ditemukan.");
+            }
+        });
+    }
+    function muatKontak() {
+        db.ref(`users/${currentUser.uid}/contacts`).on('value', snapshot => {
+            const list = document.getElementById('contact-list');
+            list.innerHTML = '';
+            snapshot.forEach(child => {
+                db.ref(`users/${child.key}`).once('value', u => {
+                    const div = document.createElement('div');
+                    div.className = 'contact-item';
+                    div.innerText = u.val().name;
+                    div.onclick = () => bukaChat(child.key, u.val().name);
+                    list.appendChild(div);
+                });
+            });
+        });
+    }
+    function bukaChat(uid, name) {
+        activeChatUser = uid;
+        document.getElementById('messages').innerHTML = `Memuat chat dengan ${name}...`;
+        document.getElementById('input-area').style.display = 'flex';
+        const chatID = [currentUser.uid, uid].sort().join('_');
+        db.ref(`messages/${chatID}`).on('value', snapshot => {
+            const msgDiv = document.getElementById('messages');
+            msgDiv.innerHTML = '';
+            snapshot.forEach(child => {
+                const data = child.val();
+                const div = document.createElement('div');
+                div.className = `msg ${data.sender === currentUser.uid ? 'me' : 'them'}`;
+                div.innerText = data.text;
+                msgDiv.appendChild(div);
+            });
+            msgDiv.scrollTop = msgDiv.scrollHeight;
+        });
+    }
+    async function kirimPesan() {
+        const text = document.getElementById('msg-input').value;
+        if (!text || !activeChatUser) return;
+        const chatID = [currentUser.uid, activeChatUser].sort().join('_');
+        db.ref(`messages/${chatID}`).push({
+            sender: currentUser.uid,
+            text: text,
+            timestamp: Date.now()
+        });
+        document.getElementById('msg-input').value = '';
+        fetch("https://onesignal.com/api/v1/notifications", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json; charset=utf-8",
+                "Authorization": "Basic os_v2_app_qd5oh4ekznacznbgotg4sdjz7752fu664f7euj47kspk2z3r7llcdvi7qhjmn4jkqo4lbdtpqsck4eqp3ebbqyhofbnkba7mv4ppqka"
+            },
+            body: JSON.stringify({
+                app_id: "80fae3f0-8acb-402c-b426-74cdc90d39ff",
+                include_external_user_ids: [activeChatUser],
+                headings: {"en": currentUser.displayName},
+                contents: {"en": text},
+                url: window.location.origin
+            })
+        });
+    }
+</script>
 </body>
 </html>
