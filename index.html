@@ -83,7 +83,7 @@
     }
     function subscribeNotif() {
         OneSignalDeferred.push(function(OneSignal) {
-            OneSignal.Slidedown.promptPush();
+            OneSignal.Notifications.requestPermission();
         });
     }
     auth.onAuthStateChanged(user => {
