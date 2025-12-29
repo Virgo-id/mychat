@@ -83,7 +83,11 @@
     }
     function subscribeNotif() {
         OneSignalDeferred.push(function(OneSignal) {
-            OneSignal.Notifications.requestPermission();
+            OneSignal.Notifications.requestPermission().then(() => {
+                if (OneSignal.Notifications.permission) {
+                    alert("Notifikasi berhasil diaktifkan!");
+                }
+            });
         });
     }
     auth.onAuthStateChanged(user => {
