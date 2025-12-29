@@ -72,8 +72,6 @@
     OneSignalDeferred.push(async function(OneSignal) {
         await OneSignal.init({
             appId: "80fae3f0-8acb-402c-b426-74cdc90d39ff",
-            serviceWorkerPath: "mychat/OneSignalSDKWorker.js",
-            serviceWorkerParam: { scope: "/mychat/" }
         });
     });
     function login() {
@@ -85,7 +83,7 @@
     }
     function subscribeNotif() {
         OneSignalDeferred.push(function(OneSignal) {
-            OneSignal.Notifications.requestPermission();
+            OneSignal.Slidedown.promptPush();
         });
     }
     auth.onAuthStateChanged(user => {
